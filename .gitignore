@@ -1,0 +1,6 @@
+.jshintrc
+.DS_Store
+node_modules/
+public/styles/
+config
+
