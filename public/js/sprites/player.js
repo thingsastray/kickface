@@ -1,22 +1,43 @@
+(function(){
+	//private static variable
+	var ANIMATIONS = {
+		IDLE : {
+			name: "idle",
+			frames : [0, 1, 2, 3],
+			fps : 5
+		}
+	};
+	
+	// sprite class constructor
+	// 0id is 0 index based
+	kickface.Player = function (game, id, name) {
+		this.game = game;
+		this.id = id;
+		this.name = name? name : 'Player '+(id+1);
 
-// sprite class constructor
+		//super constructor call
+		Phaser.Sprite.call(this, game, 0, 0, 
+			kickface.ASSETS.SPRITESHEET.PLAYER.name
+		);
 
-kickface.Player = function (game, id, name) {
-	this.game = game;
-	this.id = id;
-	this.name = name? name : 'Player '+(id+1);
+		// set animations
+		this.animations.add(ANIMATIONS.IDLE.name, 
+			ANIMATIONS.IDLE.frames
+		);
 
-	//super constructor call
-	Phaser.Sprite.call(this, game, 0, 0, 
-		kickface.ASSETS.SPRITESHEET.PLAYER.name
-	);
+		// play animations
+		this.animations.play(ANIMATIONS.IDLE.name, 
+			ANIMATIONS.IDLE.fps, true
+		);
+	};
 
-};
+	// extends Sprite protpye
 
-// extends Sprite protpye
+	kickface.Player.prototype = Object.create	(Phaser.Sprite.prototype, {
+		constructor: {
+			value: kickface.Player
+		}
+	});
+})();
 
-kickface.Player.prototype = Object.create	(Phaser.Sprite.prototype, {
-	constructor: {
-		value: kickface.Player
-	}
-});
+
