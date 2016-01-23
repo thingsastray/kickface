@@ -2,16 +2,18 @@
 
 	var INITIAL_POSTIONS = [
 	//player 1
-	{ x:100, y:100 },
+	{ x: 100, y: 100 },
 	//player 2
 	{ x: 600, y: 100 }
 	];
-	// class constructor
 
+
+	// class constructor
 	kickface.Game = function (){
 
 		this.player_1;
 		this.player_2;
+		
 
 	};
 
@@ -33,6 +35,15 @@
 
 	kickface.Game.prototype.update = function() {
 		
+		//set facing direction
+		if(this.player_1.x < this.player_2.x){ //player 1 is on left side
+			this.player_1.facing = kickface.Player.FACING.RIGHT;
+			this.player_2.facing = kickface.Player.FACING.LEFT;
+		} else{
+			this.player_1.facing = kickface.Player.FACING.LEFT;
+			this.player_2.facing = kickface.Player.FACING.RIGHT;
+		}
+
 	};
 
 	kickface.Game.prototype.shutdown = function() {

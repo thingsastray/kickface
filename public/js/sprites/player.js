@@ -7,6 +7,11 @@
 			fps : 5
 		}
 	};
+
+	var FACING_FACTOR = {
+		LEFT: -1,
+		RIGHT: 1
+	};
 	
 	// sprite class constructor
 	// 0id is 0 index based
@@ -14,6 +19,7 @@
 		this.game = game;
 		this.id = id;
 		this.name = name? name : 'Player '+(id+1);
+		this.facing; //direction that player is facing
 
 		//super constructor call
 		Phaser.Sprite.call(this, game, 0, 0, 
@@ -38,6 +44,21 @@
 			value: kickface.Player
 		}
 	});
+
+	//public static variable
+	kickface.Player.FACING = {
+		LEFT: 'LEFT',
+		RIGHT: 'RIGHT'
+	};
+
+	//invoked on every frame
+	kickface.Player.prototype.update = function() {
+		
+		//update facing
+		this.scale.x = FACING_FACTOR[ this.facing];
+	
+	};
+
 })();
 
 
