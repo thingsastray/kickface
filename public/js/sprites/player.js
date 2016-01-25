@@ -41,6 +41,7 @@
 
 	var DIVE_DISTANCE = 400; // horizontal "steps" per frame
 
+	
 	var DIVE_JUMP_TIMEOUT = 125; //ms after a dive that counts as a dive still happening(and can jump)
 
 	function select_sprite_row(player_id){
@@ -59,58 +60,71 @@
 		this.is_diving = false;
 
 		//super constructor call
-		Phaser.Sprite.call(this, game, 0, 0, 
-			kickface.ASSETS.SPRITESHEET.PLAYER.name
-		);
+		Phaser.Sprite.call(this, game, 0, 0, kickface.ASSETS.SPRITESHEET.PLAYER.name);
 
+		//enable physics (adds this.body)
 		this.game.physics.enable(this, Phaser.Physics.ARCADE);
 
+		//use stage bounding box
+		this.body.collideWorlBounds = true;
+
+	
 
 		// set center registration point
 		this.anchor = {x : 0.5, y: 0.5};
-
-		//set animation
-		
-		this.animations.add(ANIMATIONS.IDLE.name, 
-			ANIMATIONS.IDLE.frames.map(select_sprite_row(this.id))
-		);
-		this.animations.add(ANIMATIONS.WALK.name, 
-			ANIMATIONS.WALK.frames.map(select_sprite_row(this.id))
-		);
-    this.animations.add(ANIMATIONS.JUMP.name, 
-    	ANIMATIONS.JUMP.frames.map(select_sprite_row(this.id))
-    );
-    this.animations.add(ANIMATIONS.DIVE.name, 
-    	ANIMATIONS.DIVE.frames.map(select_sprite_row(this.id))
-    );
-    this.animations.add(ANIMATIONS.DEAD.name, 
-    	ANIMATIONS.DEAD.frames.map(select_sprite_row(this.id))
-    );
 
 		// play animations
 		this.animations.play(ANIMATIONS.IDLE.name, 
 			ANIMATIONS.IDLE.fps, true
 		);
+
+		//public static variable
+		kickface.Player.FACING = {
+			LEFT: 'LEFT',
+			RIGHT: 'RIGHT'
+		};
+
+			// extends Sprite protype
+
+		kickface.Player.prototype = Object.create	(Phaser.Sprite.prototype, {
+			constructor: {
+				value: kickface.Player
+			}
+		});
+
+
+		// initial animation state
+		
+		
+			this.animations.add(ANIMATIONS.IDLE.name, 
+				ANIMATIONS.IDLE.frames.map(select_sprite_row(this.id))
+			);
+			this.animations.add(ANIMATIONS.WALK.name, 
+				ANIMATIONS.WALK.frames.map(select_sprite_row(this.id))
+			);
+	    this.animations.add(ANIMATIONS.JUMP.name, 
+	    	ANIMATIONS.JUMP.frames.map(select_sprite_row(this.id))
+	    );
+	    this.animations.add(ANIMATIONS.DIVE.name, 
+	    	ANIMATIONS.DIVE.frames.map(select_sprite_row(this.id))
+	    );
+	    this.animations.add(ANIMATIONS.DEAD.name, 
+	    	ANIMATIONS.DEAD.frames.map(select_sprite_row(this.id))
+	    );
+  	
+		
 	};
-
-	// extends Sprite protype
-
-	kickface.Player.prototype = Object.create	(Phaser.Sprite.prototype, {
-		constructor: {
-			value: kickface.Player
-		}
-	});
-
-	//public static variable
-	kickface.Player.FACING = {
-		LEFT: 'LEFT',
-		RIGHT: 'RIGHT'
-	};
+	
 
 	//invoked on every frame
 	kickface.Player.prototype.update = function() {
 		
-		 // update facing
+		// low acceleration(gravity) while diving
+		if(this.diving){
+			this.body.accerleration.y = 1000;
+		}	
+
+		// update facing
     if( this.alive ){
       this.scale.x = FACING_FACTOR[ this.facing ];
     }
@@ -140,11 +154,15 @@
     // stop all input
     this.alive = false;
 
+    //make animation
+    this.animation.play(ANIMATIONS.DEAD.name);
   };
 
 	//Input actions
 
 	kickface.Player.prototype.jump = function(){
+		if(!this.alive) return;
+
 		 // allow jumping from the floor (not in mid air)
     if( this.body.y === kickface.Game.FLOOR_Y ){
       this.body.velocity.y = -JUMP_HEIGHT;
@@ -154,6 +172,8 @@
 	};
 	
 	kickface.Player.prototype.dive = function() {
+		if(!this.alive) return;
+
 		if( this.body.y < kickface.Game.FLOOR_Y ){
       this.body.velocity.y = DIVE_SPEED;
       this.body.velocity.x = DIVE_DISTANCE * FACING_FACTOR[ this.facing ];
@@ -175,10 +195,12 @@
 	};
 
 	kickface.Player.prototype.step_left = function() {
+		if(!this.alive) return;
 		this.body.velocity.x = -WALK_SPEED;
 	};
 
 	kickface.Player.prototype.step_right = function() {
+		if(!this.alive) return;
 		this.body.velocity.x = WALK_SPEED;
 
 	};

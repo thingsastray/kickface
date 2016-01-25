@@ -45,7 +45,7 @@ var FLASH_MESSAGE_STYLE = {
     	kickface.ASSETS.IMAGE.BG.height, kickface.ASSETS.IMAGE.BG.name
     );
 
-		this.player_1 = new kickface.Player( this.game, 0);
+		this.player_1 = new kickface.Player(this.game, 0);
 		this.player_2 = new kickface.Player( this.game, 1);
 		this.game.add.existing(this.player_1);
 		this.game.add.existing(this.player_2);
@@ -83,12 +83,17 @@ var FLASH_MESSAGE_STYLE = {
         player.body.acceleration.y = GRAVITY;
       }
 
+      //update our input handler
+      this.input.update();
+
+      //update physcis
+	    this.game.physics.arcade.collide(this.player_1, this.player_2,
+	     players_collide, should_players_collide, this
+	    );
+
     });
 
-    //update physcis
-    this.game.physics.arcade.collide(this.player_1, this.player_2,
-     players_collide, should_players_collide, this
-    );
+    
 
     function players_collide(player_1, player_2){
     // check if both are diving

@@ -51,9 +51,8 @@
 	    this.state_keys.CONTINUE.onUp.add( this.state.continue.bind(this.state) );
   	};
 
-
-
-
-
+  	kickface.GameInput.prototype.update = function() {
+			
+  	};
 
 })();
